@@ -32,10 +32,6 @@ We have alsoe implemented some functionalities that are not required by the obje
 
 
 
-## Evaluation Criteria
-
-
-
 ## Solution Design
 
 ## Server & Web Client
@@ -149,19 +145,4 @@ In addition, the crawler also needs to be able to receive and react to user cont
 ![screenshot](./images/front.png)
 ![screenshot](./images/back.png)
 
-## Supporting Artifacts
-- [Link to repo]()
-- [Link to video demo]()
-Our demo video was shot after the testing set up was disconnected. Since our demo in class was unable to show the crawler successfully making it around the second corners of the track, we filmed our crawler completing the track with one beacon at the beginning. We also included our QR code successfully being read and a short demo of our crawler working wirelessly because our time allowed.
 
-
-## References
-
------
-
-## Reminders
-
-- Video recording in landscape not to exceed 90s
-- Each team member appears in video
-- Make sure video permission is set accessible to the instructors
-- Repo is private
