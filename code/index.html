@@ -1,0 +1,273 @@
+<html>
+<head>
+<title>Quest 6</title>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
+<meta charset="utf-8"/>
+<style>
+/* Create three equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 29%;
+  padding: 10px;
+  height: 250px; /* Should be removed. Only for demonstration */
+}
+.column2 {
+  float: left;
+  width: 15%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+.column3 {
+  float: left;
+  width: 40%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+<script type="text/javascript">
+  var allSplit = "<br/>";
+
+/////////////////////////////// Read data from data.csv file /////////////////////////
+$(document).ready(function () {
+    var csvLines = [];
+    var ele = [];
+    var ele2 = [];
+    var mode;
+    var wheelSpeed;
+    var count = 0;
+    var totalTime = 0;
+
+
+    var updateChart = function () {       // Get csv file
+      //console.log("In update");
+      $.get("data", getDataPointsFromCSV);
+      $.get("log", getLogFromCSV);
+    };
+
+    function getLogFromCSV(csv1) {
+      allSplit = "<br/>";
+      count = 0;
+      csvLines1 = csv1.split(/[\r?\n|\r|\n]+/);
+      for (var i = 0; i < csvLines1.length; i++){
+        if (csvLines1[i].length > 0) {
+          allSplit = allSplit + csvLines1[i] + "<br />";
+          document.getElementById("splitlog_display").innerHTML=allSplit;
+          //console.log(allSplit);
+        }
+      }
+    }
+
+    function getDataPointsFromCSV(csv) {    // Obtain data from csv file
+        //console.log(csv);
+        var prev_split = "none";
+        csvLines = csv.split(/[\r?\n|\r|\n]+/);
+        for (var i = 0; i < csvLines.length; i++){
+          if (csvLines[i].length > 0) {
+              ele = csvLines[i].split(",");
+              //console.log(ele);
+              if (ele[0] == "mode"){
+                mode=ele[1];
+              }
+              else if(ele[0] == "wheelSpeed")
+              {
+                document.getElementById("speed_display").innerHTML=ele[1];
+              }
+              else if(ele[0] == "steering")
+              {
+                document.getElementById("angle_display").innerHTML=ele[1];
+              }
+              else if(ele[0] == "front")
+              {
+                document.getElementById("front_display").innerHTML=ele[1];
+              }
+              else if(ele[0] == "side")
+              {
+                document.getElementById("side_display").innerHTML=ele[1];
+              }
+              else if(ele[0] == "totalTime")
+              {
+                totalTime=ele[1]+" sec";
+                document.getElementById("totalT").innerHTML =totalTime;
+              }
+              // Break
+              if (mode=="0"){
+                document.getElementById("mode_display").innerHTML ="Stop";
+              }
+              else if (mode=="1"){
+                document.getElementById("mode_display").innerHTML ="Automatic";
+              }
+              else if (mode=="2"){
+                document.getElementById("mode_display").innerHTML ="Manual Forward";
+              }
+              else if (mode=="3"){
+                document.getElementById("mode_display").innerHTML ="Manual Back";
+              }
+          }
+        }
+    }
+
+     setInterval(function(){updateChart()}, 500);  // update page every 0.5s
+});
+
+////////////////// Button Functions /////////////////////////
+
+var xhttp = new XMLHttpRequest();
+
+function speed_click(){
+  var sel_val = document.getElementById("speed_select");
+  var result = sel_val.options[sel_val.selectedIndex].value;
+
+  if (result == "a"){
+    xhttp.open("POST", "http://localhost:8082/b_enter-1", true);
+    xhttp.send();
+  }else if (result == "b"){
+    xhttp.open("POST", "http://localhost:8082/b_enter-3", true);
+    xhttp.send();
+
+  }else if (result == "c"){
+    xhttp.open("POST", "http://192.168.1.48:8082/b_enter-5", true);
+    xhttp.send();
+  }
+}
+
+function left_click(){
+  xhttp.open("POST", "http://192.168.1.48:8082/b_left", true);
+  xhttp.send();
+}
+function right_click(){
+  xhttp.open("POST", "http://192.168.1.48:8082/b_right", true);
+  xhttp.send();
+}
+function front_click(){
+  xhttp.open("POST", "http://192.168.1.48:8082/b_front", true);
+  xhttp.send();
+}
+function back_click(){
+  xhttp.open("POST", "http://192.168.1.48:8082/b_back", true);
+  xhttp.send();
+}
+function stop_click(){
+  xhttp.open("POST", "http://192.168.1.48:8082/b_stop", true);
+  xhttp.send();
+}
+function center_click(){
+  xhttp.open("POST", "http://192.168.1.48:8082/b_center", true);
+  xhttp.send();
+}
+function auto_click(){
+  document.getElementById("mode_display").innerHTML ="Automatic";
+  xhttp.open("POST", "http://192.168.1.48:8082/b_auto", true);
+  xhttp.send();
+}
+
+</script>
+</head>
+
+<body>
+  <div class="row">
+    <div class="column" >
+      <h2>MODE: </h2>
+      <h4 id="mode_display"></h4>
+      <h2>Front Distance: </h2>
+      <h4 id="front_display"></h4>
+      <h2>Side Distance: </h2>
+      <h4 id="side_display"></h4>
+    </div>
+    <div class="column" >
+      <h2>STEERING</h2>
+      <button id="b_left" onclick="left_click()">Left</button>&nbsp;
+      <button id="b_right" onclick="right_click()">Right</button>
+      <br />
+      <br />
+      <button id="b_center" onclick="center_click()">Center</button>
+      <br />
+      <br />
+      <button id="b_front" onclick="front_click()">Front</button>&nbsp;
+      <button id="b_back" onclick="back_click()">Back</button>
+      <br />
+      <br />
+      <button id="b_stop" onclick="stop_click()">Stop</button>&nbsp;
+      <button id="b_auto" onclick="auto_click()">Auto</button>
+      <br/>
+    </div>
+    <div class="column" >
+      <h2>Current Speed:</h2>
+      <h2 id="speed_display"></h2>
+      <br />
+      <br />
+      <h2>Current Angle:</h2>
+      <h2 id="angle_display"></h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column2" >
+      <h2>SET SPEED:</h2>
+      <select id="speed_select">
+      <option value="a">0.1</option>
+      <option value="b">0.3</option>
+      <option value="c">0.5</option>
+      </select>
+      <button id="b_enter" onclick="speed_click()">Enter</button>
+    </div>
+    <div class="column3">
+      <h2>WEBCAM</h2>
+      <p id="QR"></p>
+      <img src="http://192.168.1.48:8081" class="video" crossOrigin="anonymous" id="video" height="350" width="500">
+    </div>
+    <div class ="column">
+      <h2> SPLIT TIME LOG:</h2>
+      <h3>Total Time Since Start:</h3>
+      <h3 id="totalT">No Total Time Yet</h3>
+      <h4 id="splitlog_display"></h4>
+    </div>
+  </div>
+  <canvas id="canvas" hidden></canvas>
+<script>
+
+///////////////// QR Decoding Using jsQR /////////////////////////
+var video = document.getElementById("video");
+var canvasElement = document.getElementById("canvas");
+canvasElement.style.visibility = "hidden";
+var canvas = canvasElement.getContext("2d");
+
+function drawLine(begin, end, color) {
+  canvas.beginPath();
+  canvas.moveTo(begin.x, begin.y);
+  canvas.lineTo(end.x, end.y);
+  canvas.lineWidth = 4;
+  canvas.strokeStyle = color;
+  canvas.stroke();
+}
+var myQR = function(){
+
+    canvasElement.hidden = false;
+
+    canvasElement.height = video.height;
+    canvasElement.width = video.width;
+    canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+    var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+    var code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: "dontInvert",
+    });
+    if (code) {
+      drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+      drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+      drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+      drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+      document.getElementById("QR").innerHTML = code.data;
+    }
+}
+setInterval(function(){myQR()}, 1000);
+</script>
+</body>
+
+</html>
